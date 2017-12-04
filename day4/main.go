@@ -14,7 +14,7 @@ func orderWord(word string) string {
 	return strings.Join(slicedWord, "")
 }
 
-func validPassphrase(passphrase string) bool {
+func validPassphrase(passphrase string, level int) bool {
 	passphraseSlice := strings.Split(passphrase, " ")
 	for {
 		if len(passphraseSlice) == 0 {
@@ -26,8 +26,10 @@ func validPassphrase(passphrase string) bool {
 			if word == wordCheck {
 				return false
 			}
-			if orderedWordCheck == orderWord(word) {
-				return false
+			if level == 2 {
+				if orderedWordCheck == orderWord(word) {
+					return false
+				}
 			}
 		}
 		passphraseSlice = passphraseSlice[1:]
@@ -40,13 +42,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// Part 1
 	scanner := bufio.NewScanner(file)
-	total := 0
+	totalPart1 := 0
+	totalPart2 := 0
 	for scanner.Scan() {
-		if validPassphrase(scanner.Text()) {
-			total = total + 1
+		line := scanner.Text()
+		if validPassphrase(line, 1) {
+			totalPart1++
+		}
+		if validPassphrase(line, 2) {
+			totalPart2++
 		}
 	}
-	fmt.Println(total)
+	fmt.Println(totalPart1)
+	fmt.Println(totalPart2)
 
 }
