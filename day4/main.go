@@ -1,11 +1,18 @@
 package main
 
 import (
-	"strings"
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
+	"strings"
 )
+
+func orderWord(word string) string {
+	slicedWord := strings.Split(word, "")
+	sort.Strings(slicedWord)
+	return strings.Join(slicedWord, "")
+}
 
 func validPassphrase(passphrase string) bool {
 	passphraseSlice := strings.Split(passphrase, " ")
@@ -14,8 +21,12 @@ func validPassphrase(passphrase string) bool {
 			break
 		}
 		wordCheck := passphraseSlice[0]
+		orderedWordCheck := orderWord(wordCheck)
 		for _, word := range passphraseSlice[1:] {
 			if word == wordCheck {
+				return false
+			}
+			if orderedWordCheck == orderWord(word) {
 				return false
 			}
 		}
