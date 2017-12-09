@@ -30,7 +30,6 @@ func removeGarbage(tokens []string) ([]string, int) {
 	for i := 0; i < len(tokens); i++ {
 		if tokens[i] == ">" {
 			inGarbage = false
-			continue
 		}
 		if inGarbage {
 			garbageRemoved = garbageRemoved + 1
@@ -58,10 +57,6 @@ func calcScore(tokens []string) int {
 		}
 	}
 	return score
-}
-
-func popSlice(slice []string) (string, []string) {
-	return slice[0], append(slice[1:])
 }
 
 func main() {
