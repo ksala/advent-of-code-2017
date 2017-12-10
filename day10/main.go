@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type circularList struct {
 	elems []int
@@ -35,15 +37,11 @@ func (c *circularList) setElems(n int, put []int) {
 }
 
 func (c *circularList) moveCur(n int) {
-	t := c.cur + n
-	if t >= len(c.elems) {
-		t = t - len(c.elems)
-	}
-	c.cur = t
+	c.cur = (c.cur + n) % len(c.elems)
 }
 
-func makeCircularList(elems []int) circularList {
-	list := circularList{elems: elems}
+func makeCircularList(elems []int) *circularList {
+	list := &circularList{elems: elems}
 	return list
 }
 
@@ -62,7 +60,7 @@ func main() {
 	for i := 0; i < 256; i++ {
 		input[i] = i
 	}
-	list := makeCircularList(input)
+	list := makeCircularList(append([]int{}, input...))
 	lenghts := []int{130, 126, 1, 11, 140, 2, 255, 207, 18, 254, 246, 164, 29, 104, 0, 224}
 	for _, lenght := range lenghts {
 		elems := list.getElems(lenght)
@@ -71,5 +69,36 @@ func main() {
 		list.moveCur(lenght + list.skip)
 		list.skip = list.skip + 1
 	}
-	fmt.Printf("First answer is %d\n", list.elems[0] * list.elems[1])
+	fmt.Printf("First answer is %d\n", list.elems[0]*list.elems[1])
+
+	list2 := makeCircularList(append([]int{}, input...))
+	lenghtsInput2 := "130,126,1,11,140,2,255,207,18,254,246,164,29,104,0,224"
+	byteArray := []byte(lenghtsInput2)
+	byteArray = append(byteArray, 17, 31, 73, 47, 23)
+	lenghts2 := make([]int, len(byteArray))
+	for index, value := range byteArray {
+		lenghts2[index] = int(value)
+	}
+	for round := 0; round < 64; round++ {
+		for _, lenght := range lenghts2 {
+			elems := list2.getElems(lenght)
+			rev := reverseSlice(elems)
+			list2.setElems(lenght, rev)
+			list2.moveCur(lenght + list2.skip)
+			list2.skip = list2.skip + 1
+		}
+	}
+	denseHash := []int{}
+	for i := 0; i < 256; i = i + 16 {
+		total := 0
+		for _, elem := range list2.elems[i : i+16] {
+			total = total ^ elem
+		}
+		denseHash = append(denseHash, total)
+	}
+	fmt.Printf("The second answer is: ")
+	for _, value := range denseHash {
+		fmt.Printf("%.2x", value)
+	}
+	fmt.Println()
 }
